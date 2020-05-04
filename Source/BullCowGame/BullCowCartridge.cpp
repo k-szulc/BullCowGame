@@ -25,7 +25,7 @@ void UBullCowCartridge::SetupGame()
 {
 
     // HiddenWord = TEXT("abolishment");
-    HiddenWord = TEXT("cake");
+    HiddenWord = TEXT("heat");
     PlayerLives = HiddenWord.Len();
     // PrintLine(TEXT("The HiddenWord is: %s"), *HiddenWord); // debug line
 
@@ -91,9 +91,9 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
 bool UBullCowCartridge::IsIsogram(FString Guess)
 {
-    for (int64 i = 0 ; i < Guess.Len() ; i++)
+    for (int32 i = 0 ; i < Guess.Len() ; i++)
     {
-        for (int64 j = 0 ; j < Guess.Len() ; j++)
+        for (int32 j = 0 ; j < Guess.Len() ; j++)
         {
             if (Guess[i] == Guess[j] && i != j)
             {
@@ -106,18 +106,32 @@ bool UBullCowCartridge::IsIsogram(FString Guess)
 
 FString UBullCowCartridge::CheckLetters(FString Guess)
 {
-    int64 CorrectLetters = 0;
+    int32 BullLetter = 0;
+    int32 CowLetter = 0;
 
-    for (int64 a = 0; a < HiddenWord.Len(); a++)
+    for (int32 i = 0; i < Guess.Len(); i++)
     {
 
-        if (Guess[a] == HiddenWord[a])
+        if (Guess[i] == HiddenWord[i])
         {
-            ++CorrectLetters;
+            ++BullLetter;
         }
+        
+        for (int32 j = 0 ; j < Guess.Len(); j++)
+        {
+            if(Guess[i] == HiddenWord[j])
+            {
+                ++CowLetter;
+            }
+        }
+
     }
+
+    CowLetter -= BullLetter; // To exclude Bulls from Cows :D
+
+    
  
-    FString out = FString::Printf(TEXT("In Your attempt You had %i correct letters\nand %i wrong. Get better kid! "), CorrectLetters, HiddenWord.Len() - CorrectLetters);
+    FString out = FString::Printf(TEXT("In Your attempt You had %i Bulls\nand %i Cows."), BullLetter, CowLetter);
     return out;
 }
 
