@@ -43,6 +43,7 @@ void UBullCowCartridge::EndGame()
 
 void UBullCowCartridge::ProcessGuess(FString Guess)
 { 
+    
     if (Guess == HiddenWord)
     {
         PrintLine(TEXT("Bingo !"));
@@ -50,21 +51,10 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
         return;
     }
 
-    if (Guess.Len() != HiddenWord.Len())
+    if (CheckWord(Guess))
     {
-        PrintLine(TEXT("Hidden Word is %i chars long, try again !"), HiddenWord.Len());
-        PrintLine(TEXT("You have %i lives left."), PlayerLives);
         return;
     }
-
-    // check if isogram 
-    if(!IsIsogram(Guess))
-    {
-        PrintLine(TEXT("There must be no repeating letters, try again."));
-        PrintLine(TEXT("You have %i lives left."), PlayerLives);
-        return;
-    }
-
 
 
     PrintLine(TEXT("Lost a life"));
@@ -86,7 +76,26 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
 }
 
-bool UBullCowCartridge::IsIsogram(FString Word)
+bool UBullCowCartridge::CheckWord(FString Word) const
+{
+    if (Word.Len() != HiddenWord.Len())
+    {
+        PrintLine(TEXT("Hidden Word is %i chars long, try again !"), HiddenWord.Len());
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
+        return true;
+    }
+
+    if(!IsIsogram(Word))
+    {
+        PrintLine(TEXT("There must be no repeating letters, try again."));
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
+        return true;
+    }
+
+    return false;
+}
+
+bool UBullCowCartridge::IsIsogram(FString Word) const
 {
     for (int32 i = 0 ; i < Word.Len() ; i++)
     {
