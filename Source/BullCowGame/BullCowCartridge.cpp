@@ -51,7 +51,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
         return;
     }
 
-    if (CheckWord(Guess))
+    if (!CheckWord(Guess))
     {
         return;
     }
@@ -72,7 +72,9 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     }
 
     // show bull and cows
-    PrintLine(CheckLetters(Guess));
+    PrintLine(CheckLetters(Guess,HiddenWord));
+    // Try again
+    PrintLine(TEXT("\nGuess again, You have %i lives left."), PlayerLives);
 
 }
 
@@ -82,17 +84,17 @@ bool UBullCowCartridge::CheckWord(FString Word) const
     {
         PrintLine(TEXT("Hidden Word is %i chars long, try again !"), HiddenWord.Len());
         PrintLine(TEXT("You have %i lives left."), PlayerLives);
-        return true;
+        return false;
     }
 
     if(!IsIsogram(Word))
     {
         PrintLine(TEXT("There must be no repeating letters, try again."));
         PrintLine(TEXT("You have %i lives left."), PlayerLives);
-        return true;
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 bool UBullCowCartridge::IsIsogram(FString Word) const
@@ -110,7 +112,7 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
     return true;
 }
 
-FString UBullCowCartridge::CheckLetters(FString Guess)
+FString UBullCowCartridge::CheckLetters(FString Guess, FString Word) const
 {
     int32 BullLetter = 0;
     int32 CowLetter = 0;
@@ -118,14 +120,14 @@ FString UBullCowCartridge::CheckLetters(FString Guess)
     for (int32 i = 0; i < Guess.Len(); i++)
     {
 
-        if (Guess[i] == HiddenWord[i])
+        if (Guess[i] == Word[i])
         {
             ++BullLetter;
         }
         
         for (int32 j = 0 ; j < Guess.Len(); j++)
         {
-            if(Guess[i] == HiddenWord[j])
+            if(Guess[i] == Word[j])
             {
                 ++CowLetter;
             }
@@ -135,9 +137,7 @@ FString UBullCowCartridge::CheckLetters(FString Guess)
 
     CowLetter -= BullLetter; // To exclude Bulls from Cows :D
 
-    
- 
-    FString out = FString::Printf(TEXT("In Your attempt You had %i Bulls\nand %i Cows.\nGuess again, You have %i lives left."), BullLetter, CowLetter, PlayerLives);
+    FString out = FString::Printf(TEXT("In Your attempt You had %i Bulls\nand %i Cows."), BullLetter, CowLetter);
     return out;
 }
 
