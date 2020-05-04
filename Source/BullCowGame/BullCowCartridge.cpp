@@ -24,11 +24,8 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
 void UBullCowCartridge::SetupGame()
 {
 
-    // HiddenWord = TEXT("abolishment");
-    HiddenWord = TEXT("heat");
+    HiddenWord = TEXT("cake");
     PlayerLives = HiddenWord.Len();
-    // PrintLine(TEXT("The HiddenWord is: %s"), *HiddenWord); // debug line
-
     bGameOver = false;
 
     PrintLine(TEXT("Welcome into Bull and Cows game."));
@@ -48,7 +45,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 {
     if (Guess.Len() != HiddenWord.Len())
     {
-        PrintLine(TEXT("Hidden Word is %i chars long You idiot, try again !"), HiddenWord.Len());
+        PrintLine(TEXT("Hidden Word is %i chars long, try again !"), HiddenWord.Len());
         PrintLine(TEXT("You have %i lives left."), PlayerLives);
         return;
     }
@@ -85,7 +82,6 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
     // show bull and cows
     PrintLine(CheckLetters(Guess));
-    PrintLine(TEXT("Guess again, You have %i lives left."), PlayerLives);
 
 }
 
@@ -131,7 +127,7 @@ FString UBullCowCartridge::CheckLetters(FString Guess)
 
     
  
-    FString out = FString::Printf(TEXT("In Your attempt You had %i Bulls\nand %i Cows."), BullLetter, CowLetter);
+    FString out = FString::Printf(TEXT("In Your attempt You had %i Bulls\nand %i Cows.\nGuess again, You have %i lives left."), BullLetter, CowLetter, PlayerLives);
     return out;
 }
 
