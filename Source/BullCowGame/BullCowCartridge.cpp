@@ -46,6 +46,21 @@ void UBullCowCartridge::EndGame()
 
 void UBullCowCartridge::ProcessGuess(FString Guess)
 {
+    if (Guess.Len() != HiddenWord.Len())
+    {
+        PrintLine(TEXT("Hidden Word is %i chars long You idiot, try again !"), HiddenWord.Len());
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
+        return;
+    }
+
+    // check if isogram 
+    if(!IsIsogram(Guess))
+    {
+        PrintLine(TEXT("There must be no repeating letters, try again."));
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
+        return;
+    }
+
     if (Guess == HiddenWord)
     {
         PrintLine(TEXT("Bingo !"));
@@ -53,18 +68,6 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
         return;
     }
 
-    // // check if isogram
-    // if(!IsIsogram)
-    // {
-    //     PrintLine(TEXT("There are no repeating letters, try again."));
-    // }
-
-    if (Guess.Len() != HiddenWord.Len())
-    {
-        PrintLine(TEXT("Hidden Word is %i chars long You idiot, try again !"), HiddenWord.Len());
-        PrintLine(TEXT("You have %i lives left."), PlayerLives);
-        return;
-    }
 
     PrintLine(TEXT("Lost a life"));
     --PlayerLives;
@@ -73,7 +76,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     if (PlayerLives <= 0)
     {
         ClearScreen();
-        PrintLine(TEXT("You fuckin lost mate."));
+        PrintLine(TEXT("You lost mate."));
         PrintLine(TEXT("The hidden word was %s"), *HiddenWord);
         
         EndGame();
@@ -81,44 +84,40 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     }
 
     // show bull and cows
+    PrintLine(CheckLetters(Guess));
     PrintLine(TEXT("Guess again, You have %i lives left."), PlayerLives);
-    
 
-    
+}
 
-
- /*    else
+bool UBullCowCartridge::IsIsogram(FString Guess)
+{
+    for (int64 i = 0 ; i < Guess.Len() ; i++)
     {
-        PrintLine(TEXT("Nope."));
-
-        if (Guess.Len() != HiddenWord.Len())
+        for (int64 j = 0 ; j < Guess.Len() ; j++)
         {
-            PrintLine(TEXT("Hidden Word is %i chars long You idiot, try again !"), HiddenWord.Len());
-        }
-        else
-        {
-            // check if isogram
-            int64 CorrectLetters = 0;
-
-            for (int a = 0; a < HiddenWord.Len(); a++)
+            if (Guess[i] == Guess[j] && i != j)
             {
-
-                if (Guess[a] == HiddenWord[a])
-                {
-                    ++CorrectLetters;
-                }
+                return false;
             }
-
-            PrintLine(TEXT("In Your stupid attempt You had %i correct letters, and %i wrong. Get better kid! "), CorrectLetters, HiddenWord.Len() - CorrectLetters);
-        }
-
-        PrintLine(TEXT("You have %i lives left."), PlayerLives);
-
-        if (PlayerLives == 0)
-        {
-            PrintLine(TEXT("You fuckin lost mate."));
-            EndGame();
         }
     }
-     */
+    return true;
 }
+
+FString UBullCowCartridge::CheckLetters(FString Guess)
+{
+    int64 CorrectLetters = 0;
+
+    for (int64 a = 0; a < HiddenWord.Len(); a++)
+    {
+
+        if (Guess[a] == HiddenWord[a])
+        {
+            ++CorrectLetters;
+        }
+    }
+ 
+    FString out = FString::Printf(TEXT("In Your attempt You had %i correct letters\nand %i wrong. Get better kid! "), CorrectLetters, HiddenWord.Len() - CorrectLetters);
+    return out;
+}
+
