@@ -27,7 +27,7 @@ void UBullCowCartridge::SetupGame()
     // HiddenWord = TEXT("abolishment");
     HiddenWord = TEXT("cake");
     PlayerLives = HiddenWord.Len();
-    PrintLine(TEXT("The HiddenWord is: %s"), *HiddenWord); // debug line
+    // PrintLine(TEXT("The HiddenWord is: %s"), *HiddenWord); // debug line
 
     bGameOver = false;
 
@@ -50,8 +50,44 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     {
         PrintLine(TEXT("Bingo !"));
         EndGame();
+        return;
     }
-    else
+
+    // // check if isogram
+    // if(!IsIsogram)
+    // {
+    //     PrintLine(TEXT("There are no repeating letters, try again."));
+    // }
+
+    if (Guess.Len() != HiddenWord.Len())
+    {
+        PrintLine(TEXT("Hidden Word is %i chars long You idiot, try again !"), HiddenWord.Len());
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
+        return;
+    }
+
+    PrintLine(TEXT("Lost a life"));
+    --PlayerLives;
+    
+
+    if (PlayerLives <= 0)
+    {
+        ClearScreen();
+        PrintLine(TEXT("You fuckin lost mate."));
+        PrintLine(TEXT("The hidden word was %s"), *HiddenWord);
+        
+        EndGame();
+        return;
+    }
+
+    // show bull and cows
+    PrintLine(TEXT("Guess again, You have %i lives left."), PlayerLives);
+    
+
+    
+
+
+ /*    else
     {
         PrintLine(TEXT("Nope."));
 
@@ -61,6 +97,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
         }
         else
         {
+            // check if isogram
             int64 CorrectLetters = 0;
 
             for (int a = 0; a < HiddenWord.Len(); a++)
@@ -72,10 +109,10 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
                 }
             }
 
-            PrintLine(TEXT("In Your stuppid attempt You had %i correct letters, and %i wrong. Get better kid! "), CorrectLetters, HiddenWord.Len() - CorrectLetters);
+            PrintLine(TEXT("In Your stupid attempt You had %i correct letters, and %i wrong. Get better kid! "), CorrectLetters, HiddenWord.Len() - CorrectLetters);
         }
 
-        PrintLine(TEXT("You have %i lives left."), --PlayerLives);
+        PrintLine(TEXT("You have %i lives left."), PlayerLives);
 
         if (PlayerLives == 0)
         {
@@ -83,4 +120,5 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
             EndGame();
         }
     }
+     */
 }
