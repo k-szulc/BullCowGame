@@ -129,32 +129,32 @@ bool UBullCowCartridge::CheckWord(FString Word) const
     return true;
 }
 
-bool UBullCowCartridge::IsIsogram(FString Word) const
-{
-    for (int32 i = 0 ; i < Word.Len() - 1 ; i++)
-    {
-            if (Word[i] == Word[i + 1])
-            {
-                return false;
-            }
-    }
-    return true;
-}
-
 // bool UBullCowCartridge::IsIsogram(FString Word) const
 // {
-//     for (int32 i = 0; i < Word.Len(); i++)
+//     for (int32 i = 0 ; i <= Word.Len() - 1 ; i++)
 //     {
-//         for(int32 j = i + 1; j < Word.Len(); j++)
-//         {
-//             if (Word[i] == Word[j])
+//             if (Word[i] == Word[i + 1])
 //             {
 //                 return false;
 //             }
-//         }
 //     }
 //     return true;
 // }
+
+bool UBullCowCartridge::IsIsogram(FString Word) const
+{
+    for (int32 i = 0; i < Word.Len(); i++)
+    {
+        for(int32 j = i + 1; j < Word.Len(); j++)
+        {
+            if (Word[i] == Word[j])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 
 FString UBullCowCartridge::CheckLetters(FString Guess, FString Word) const
