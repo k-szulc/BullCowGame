@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
+#include "HiddenWordList.h"
+#include <chrono>
+
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
@@ -24,9 +27,38 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
 void UBullCowCartridge::SetupGame()
 {
 
-    HiddenWord = TEXT("cake");
+    HiddenWord = TEXT("a");
     PlayerLives = HiddenWord.Len();
     bGameOver = false;
+
+    // DEBUG
+    PrintLine(TEXT("WordList %i"), Words.Num());
+    int32 counter = 0;
+    TArray<FString> HiddenWords = {};
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for (FString i : Words)
+    {
+        if (IsIsogram(i))
+        {   
+            if(i.Len() >= 4 && i.Len() <= 8)
+            {
+                ++counter;
+            }
+            
+        }
+    }
+    
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
+    // DEBUG
+    PrintLine(TEXT("Duration %i"), duration.count());
+
+
+    // DEBUG
+    PrintLine(TEXT("Isograms %i"), counter);
 
     PrintLine(TEXT("Welcome into Bull and Cows game."));
     PrintLine(TEXT("Guess the %i letter word"), HiddenWord.Len());
@@ -99,18 +131,31 @@ bool UBullCowCartridge::CheckWord(FString Word) const
 
 bool UBullCowCartridge::IsIsogram(FString Word) const
 {
-    for (int32 i = 0 ; i < Word.Len() ; i++)
+    for (int32 i = 0 ; i < Word.Len() - 1 ; i++)
     {
-        for (int32 j = 0 ; j < Word.Len() ; j++)
-        {
-            if (Word[i] == Word[j] && i != j)
+            if (Word[i] == Word[i + 1])
             {
                 return false;
             }
-        }
     }
     return true;
 }
+
+// bool UBullCowCartridge::IsIsogram(FString Word) const
+// {
+//     for (int32 i = 0; i < Word.Len(); i++)
+//     {
+//         for(int32 j = i + 1; j < Word.Len(); j++)
+//         {
+//             if (Word[i] == Word[j])
+//             {
+//                 return false;
+//             }
+//         }
+//     }
+//     return true;
+// }
+
 
 FString UBullCowCartridge::CheckLetters(FString Guess, FString Word) const
 {
