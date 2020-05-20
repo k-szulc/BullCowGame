@@ -8,6 +8,21 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
     SetupGame();
+
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    TArray<FString> ValidWords = GetValidWords(Words);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    // for(int32 i = 0; i < ValidWords.Num(); i++)
+    // {
+    //     PrintLine(TEXT("%s"),*ValidWords[i]);
+    // }
+
+    PrintLine(TEXT("WordList count: %i"), ValidWords.Num());
+    PrintLine(TEXT("HiddenWord is: %s"), *HiddenWord);
+    PrintLine(TEXT("Duration %i"), duration.count());
+
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
@@ -31,34 +46,15 @@ void UBullCowCartridge::SetupGame()
     PlayerLives = HiddenWord.Len();
     bGameOver = false;
 
-    // DEBUG
-    PrintLine(TEXT("WordList %i"), Words.Num());
-    int32 counter = 0;
-    TArray<FString> HiddenWords = {};
 
-    auto start = std::chrono::high_resolution_clock::now();
-
-    for (FString i : Words)
-    {
-        if (IsIsogram(i))
-        {   
-            if(i.Len() >= 4 && i.Len() <= 8)
-            {
-                ++counter;
-            }
-            
-        }
-    }
-    
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    //auto start = std::chrono::high_resolution_clock::now();
+    //auto stop = std::chrono::high_resolution_clock::now();
+    //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
     // DEBUG
-    PrintLine(TEXT("Duration %i"), duration.count());
+    //PrintLine(TEXT("Duration %i"), duration.count());
 
 
-    // DEBUG
-    PrintLine(TEXT("Isograms %i"), counter);
 
     PrintLine(TEXT("Welcome into Bull and Cows game."));
     PrintLine(TEXT("Guess the %i letter word"), HiddenWord.Len());
@@ -154,6 +150,19 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
         }
     }
     return true;
+}
+
+TArray<FString> UBullCowCartridge::GetValidWords(TArray<FString> WordList) const
+{
+    TArray<FString> ValidWords;
+    for (FString i : WordList)
+    {
+        if(i.Len() >= 4 && i.Len() <= 8 && IsIsogram(i))
+        {   
+                ValidWords.Emplace(i);
+        }
+    }
+    return ValidWords;
 }
 
 
