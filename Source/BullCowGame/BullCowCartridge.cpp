@@ -1,27 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
 #include "HiddenWordList.h"
+// #include "Math/UnrealMathUtility.h"
+
 #include <chrono>
 
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
+    Isograms = GetValidWords(Words);
 
     SetupGame();
 
-    auto start = std::chrono::high_resolution_clock::now();
-    TArray<FString> ValidWords = GetValidWords(Words);
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    PrintLine(TEXT("WordList count: %i"), ValidWords.Num());
-    PrintLine(TEXT("HiddenWord is: %s"), *HiddenWord);
-    PrintLine(TEXT("Duration %i"), duration.count());
-
-    
-    
-
+    // auto start = std::chrono::high_resolution_clock::now();
+    // auto stop = std::chrono::high_resolution_clock::now();
+    // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 }
 
 void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player hits enter
@@ -41,17 +35,13 @@ void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player h
 void UBullCowCartridge::SetupGame()
 {
 
-    HiddenWord = TEXT("cake");
+    
+    HiddenWord = Isograms[FMath::RandRange(0,Isograms.Num() - 1)];
+    PrintLine(TEXT("HiddenWord is: %s"), *HiddenWord); 
+
+
     PlayerLives = HiddenWord.Len();
     bGameOver = false;
-
-
-    //auto start = std::chrono::high_resolution_clock::now();
-    //auto stop = std::chrono::high_resolution_clock::now();
-    //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    // DEBUG
-    //PrintLine(TEXT("Duration %i"), duration.count());
 
 
     PrintLine(TEXT("Welcome into Bull and Cows game."));
@@ -101,7 +91,6 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
     PrintLine(CheckLetters(Guess));
     // Try again
     PrintLine(TEXT("\nGuess again, You have %i lives left."), PlayerLives);
-
 }
 
 bool UBullCowCartridge::CheckWord(const FString& Word) const
