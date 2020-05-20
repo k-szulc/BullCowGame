@@ -35,12 +35,11 @@ void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player h
 void UBullCowCartridge::SetupGame()
 {
 
-    
     HiddenWord = Isograms[FMath::RandRange(0,Isograms.Num() - 1)];
-    PrintLine(TEXT("HiddenWord is: %s"), *HiddenWord); 
+    // PrintLine(TEXT("HiddenWord is: %s"), *HiddenWord); 
 
 
-    PlayerLives = HiddenWord.Len();
+    PlayerLives = HiddenWord.Len() * 1.5;
     bGameOver = false;
 
 
@@ -59,24 +58,20 @@ void UBullCowCartridge::EndGame()
 
 void UBullCowCartridge::ProcessGuess(const FString& Guess)
 { 
-    
     if (Guess == HiddenWord)
     {
         PrintLine(TEXT("Bingo !"));
         EndGame();
         return;
     }
-
     if (!CheckWord(Guess))
     {
         return;
     }
 
-
     PrintLine(TEXT("Lost a life"));
     --PlayerLives;
     
-
     if (PlayerLives <= 0)
     {
         ClearScreen();
@@ -87,9 +82,9 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
         return;
     }
 
-    // show bull and cows
-    PrintLine(CheckLetters(Guess));
-    // Try again
+    // PrintLine(CheckLetters(Guess));
+    FBullCowCount Score = GetBullCows(Guess);
+    PrintLine(TEXT("You have %i Bulls and %i Cows"), Score.Bulls, Score.Cows);
     PrintLine(TEXT("\nGuess again, You have %i lives left."), PlayerLives);
 }
 
@@ -161,6 +156,7 @@ FString UBullCowCartridge::CheckLetters(const FString& Guess) const
             if(Guess[i] == HiddenWord[j])
             {
                 ++CowLetter;
+                break;
             }
         }
 
@@ -172,3 +168,26 @@ FString UBullCowCartridge::CheckLetters(const FString& Guess) const
     return out;
 }
 
+FBullCowCount UBullCowCartridge::GetBullCows(const FString& Guess) const
+{
+    FBullCowCount Count;
+
+    for (int32 GuessIndex = 0; GuessIndex < Guess.Len(); GuessIndex++)
+    {
+        if (Guess[GuessIndex] == HiddenWord[GuessIndex])
+        {
+            Count.Bulls++;
+            continue;
+        }
+
+        for (int32 HiddenIndex = 0; HiddenIndex < HiddenWord.Len(); HiddenIndex++)
+        {
+            if(Guess[GuessIndex] == HiddenWord[HiddenIndex])
+            {
+                Count.Cows++;
+                break;
+            }
+        }        
+    }
+    return Count;
+}
